@@ -16,9 +16,9 @@ variables:
   ANSIBLE_INVENTORY_PLUGINS: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible/inventory/epc.py"
 
 # Tests for Docker driver for Platformservices 11.3.0
-Docker endeca-platformservices 11.3.0:
+Docker Centos7 endeca-platformservices 11.3.0:
   stage: deployment test
   script:
-    - molecule --debug test -s docker-11.3.0
+    - molecule --debug test -s docker-centos7-11.3.0
   tags:
     - docker

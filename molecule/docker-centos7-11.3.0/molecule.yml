@@ -10,8 +10,8 @@ lint:
   options:
     config-file: .yamllint
 platforms:
-  - name: test-docker-centos6-endeca-platformservices
-    image: centos:6
+  - name: test-docker-centos7-endeca-platformservices
+    image: leandelivery/docker-systemd:centos7
     privileged: True
     security_opts:
       - seccomp=unconfined
@@ -29,7 +29,7 @@ provisioner:
   lint:
     name: ansible-lint
 scenario:
-  name: docker-11.3.0
+  name: docker-centos7-11.3.0
 verifier:
   name: testinfra
   lint:
