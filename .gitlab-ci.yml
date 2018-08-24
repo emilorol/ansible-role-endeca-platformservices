@@ -15,10 +15,30 @@ variables:
   ANSIBLE_LIBRARY: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible"
   ANSIBLE_INVENTORY_PLUGINS: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible/inventory/epc.py"
 
-# Tests for Docker driver for Platformservices 11.3.0
-Docker endeca-platformservices 11.3.0:
+# Tests for EPC driver for Platformservices 11.3.0
+EPC endeca-platformservices 11.3.0:
+  variables:
+    EPC_REGION: EPAM-BY2
   stage: deployment test
   script:
-    - molecule --debug test -s docker-11.3.0
+    - molecule test -s cloud-epc-11.3.0
+  tags:
+    - delegated
+
+# Tests for AWS driver for Platformservices 11.3.0
+AWS endeca-platformservices 11.3.0:
+  variables:
+    EPC_REGION: AWS-EUCENTRAL
+  stage: deployment test
+  script:
+    - molecule test -s cloud-aws-11.3.0
+  tags:
+    - delegated
+  
+# Tests for Docker driver for Platformservices 11.3.0
+.Docker endeca-platformservices 11.3.0:
+  stage: deployment test
+  script:
+    - molecule test -s docker-11.3.0
   tags:
     - docker
