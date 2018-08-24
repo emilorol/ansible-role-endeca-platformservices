@@ -19,6 +19,6 @@ variables:
 Docker endeca-platformservices 11.3.0:
   stage: deployment test
   script:
-    - molecule test -s docker-11.3.0
+    - molecule --debug test -s docker-11.3.0
   tags:
     - docker
