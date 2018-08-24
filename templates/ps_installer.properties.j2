@@ -1,0 +1,42 @@
+{% if ps_version.split('.')[0] | int >= 11 or ( ps_version.split('.')[0] | int == 11 and ps_version.split('.')[1] | int >= 2 ) %}
+#Choose Install Folder
+#---------------------
+USER_INSTALL_DIR={{ base_root }}
+#Choose Install Set
+#------------------
+CHOSEN_FEATURE_LIST={{ installer_properties[install_set].features_list }}
+CHOSEN_INSTALL_FEATURE_LIST={{ installer_properties[install_set].features_list }}
+CHOSEN_INSTALL_SET={{ install_set }}
+
+{% if not install_set == "Ref-Impl" %}
+#Endeca Application Controller Service Information - Service Port
+#----------------------------------------------------------------
+ETOOLS_HTTP_PORT={{ etools_http_port }}
+
+#Endeca Application Controller Service Information - Shutdown port
+#-----------------------------------------------------------------
+ETOOLS_SERVER_PORT={{ etools_server_port }}
+
+#Endeca Application Controller Service Information - MDEX Engine root
+#--------------------------------------------------------------------
+EAC_MDEX_ROOT={{ mdex_path }}
+{% endif %}
+
+{% if ps_version.split('.')[0] | int >= 11 or ( ps_version.split('.')[0] | int == 11 and ps_version.split('.')[1] | int >= 3 ) %}
+#Install
+#-------
+-fileOverwrite_{{ base_root }}/endeca/PlatformServices{{ ps_version }}/Uninstall/Uninstall_Oracle Commerce Guided Search Platform Services {{ ps_version }}.lax=Yes to All
+{% endif %}
+{% else %}
+{{ etools_http_port }}
+{{ etools_server_port }}
+{{ etools_jcd_port }}
+{% if install_eac_controller == True %}
+Y
+{% else %}
+N
+Y
+{% endif %}
+{{ mdex_path }}
+Y
+{% endif %}

@@ -1,0 +1,16 @@
+---
+# PlatformServices version file
+version_txt: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}/version.txt"
+
+pid_dir: "/var/run/endeca"
+
+# Chosen install set
+installer_properties:
+  "Complete":
+    features_list: "PS,ACS,ACA"
+  "Typical":
+    features_list: "PS,ACS,ACA,Ref-Impl"
+  "PS-ACA":
+    features_list: "PS,ACA"
+  "Ref-Impl":
+    features_list: "Ref-Impl,PS"

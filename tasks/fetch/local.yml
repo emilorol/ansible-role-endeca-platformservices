@@ -1,0 +1,4 @@
+---
+- name: "Artifact stored localy"
+  set_fact:
+    ps_artifact: "{{ transport_local }}"
