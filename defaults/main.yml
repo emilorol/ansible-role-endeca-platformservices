@@ -33,4 +33,3 @@ etools_server_port: "8090"
 # PlatformServices versions lower 11.2
 etools_jcd_port: "8088"
 install_eac_controller: False
-
