@@ -16,7 +16,7 @@ variables:
   ANSIBLE_INVENTORY_PLUGINS: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible/inventory/epc.py"
 
 # Tests for Centos 6 EPC driver for Platformservices 11.3.0
-.EPC endeca-platformservices 11.3.0:
+EPC Centos 6 endeca-platformservices 11.3.0:
   variables:
     EPC_REGION: EPAM-BY2
   stage: deployment test
@@ -26,7 +26,7 @@ variables:
     - delegated
 
 # Tests for Centos 6 AWS driver for Platformservices 11.3.0
-.AWS endeca-platformservices 11.3.0:
+AWS Centos 6 endeca-platformservices 11.3.0:
   variables:
     EPC_REGION: AWS-EUCENTRAL
   stage: deployment test

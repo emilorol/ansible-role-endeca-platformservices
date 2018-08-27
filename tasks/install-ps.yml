@@ -101,7 +101,7 @@
 
     - name: "Create PlatformServices service in init.d"
       template:
-        src: "platformservices_init.j2"
+        src: "platformservices_service.j2"
         dest: "/etc/init.d/{{ ps_service }}"
         mode: "0755"
       when: ansible_facts.service_mgr in ("upstart", "sysvinit" )
