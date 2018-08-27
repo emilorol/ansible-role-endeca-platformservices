@@ -74,7 +74,7 @@
         mode: "0775"
         recurse: True
 
-    - name: "Put ps profile"
+    - name: "Put PlatformServices profile"
       copy:
         src: "{{ base_root }}/endeca/PlatformServices/workspace/setup/installer_sh.ini"
         dest: "/etc/profile.d/ps.sh"
@@ -99,16 +99,16 @@
         line: "CATALINA_PID={{ pid_dir }}/{{ ps_service }}.pid"
         create: True
 
-    - name: "Create PlatformServices init script in init.d"
+    - name: "Create PlatformServices service in init.d"
       template:
         src: "platformservices_init.j2"
         dest: "/etc/init.d/{{ ps_service }}"
         mode: "0755"
-      when: ansible_facts.service_mgr == "upstart"
+      when: ansible_facts.service_mgr in ("upstart", "sysvinit" )
 
-    - name: "Create PlatformServices init script in systemd"
+    - name: "Create PlatformServices service in systemd"
       template:
-        src: "platformservices_init.j2"
+        src: "platformservices_service.j2"
         dest: "/etc/systemd/system/{{ ps_service }}.service"
         mode: "0755"
       when: ansible_facts.service_mgr == "systemd"

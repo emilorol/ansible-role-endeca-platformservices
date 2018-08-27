@@ -10,20 +10,13 @@ lint:
   options:
     config-file: .yamllint
 platforms:
-  - name: test-epc-centos7-endeca-platformservices
-    image: CentOS7_64-bit
-    shape: small
-    region: EPAM-BY2
-    wait_timeout: 1800
-    groups:
-      - rhel_family
   - name: test-epc-centos6-endeca-platformservices
     image: CentOS6_64-bit
     shape: small
     region: EPAM-BY2
     wait_timeout: 1800
     groups:
-      - debian_family
+      - rhel_family
 provisioner:
   name: ansible
   playbooks:
@@ -39,7 +32,7 @@ provisioner:
     ANSIBLE_LIBRARY:
       /home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible
 scenario:
-  name: cloud-epc-11.3.0
+  name: cloud-epc-centos6
 verifier:
   name: testinfra
   options:

@@ -1,0 +1,27 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: .yamllint
+platforms:
+  - name: test-docker-11.1.0-centos7
+    image: leandelivery/docker-systemd:centos7
+    privileged: True
+    groups:
+      - ansible_role_docker_ct
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: docker-11.1.0-centos7
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

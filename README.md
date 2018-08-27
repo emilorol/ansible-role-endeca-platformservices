@@ -62,7 +62,7 @@ Set  PlatformServices version as it's defined in official Oracle Documentation
   - `ps_service` - name of the service  
     default: `endeca-platformservices`
 
-  - `install_set` - set chosed for silent installation  
+  - `install_set` - set chosen set for silent installation  
     Available:  
       - `Complete`
       - `Typical`
@@ -105,6 +105,24 @@ Example Playbook
   vars:
     mdex_version: "11.3.0"
 ```
+
+### Installing Endeca PlatformServices 11.3.0 from web:
+```yaml
+- name: "Install PlatformServices 11.3.0 from web"
+  hosts: all
+
+  roles:
+    - role: lean_delivery.endeca_mdex
+      transport: "web"
+      transport_web: "http://my-storage.example.com/V861206-01.zip"
+    - role: lean_delivery.endeca_platformservices
+      ps_version: "11.3.0"
+      transport: "web"
+      transport_web: "http://my-storage.example.com/V861203-01.zip"
+  vars:
+    mdex_version: "11.3.0"
+```
+
 
 ## License
 

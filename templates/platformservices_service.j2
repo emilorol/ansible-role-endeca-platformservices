@@ -1,10 +1,10 @@
-{% if ansible_facts.service_mgr == "upstart" %}
+{% if ansible_facts.service_mgr in ("upstart", "sysvinit" ) %}
 #!/bin/sh
 #
-# {{ ps_service }} Runs endeca platform services
+# Oracle Endeca Platform Services
 #
-# chkconfig:   2345 90 15
-# description: Runs endeca platform services
+# chkconfig:   345 90 21
+# description: Oracle Endeca Platform Services
 
 # source function library
 . /etc/rc.d/init.d/functions
@@ -98,7 +98,7 @@ case "$1" in
 esac
 {% elif ansible_facts.service_mgr == "systemd" %}
 [Unit]
-Description=Runs endeca platform services
+Description=Oracle Endeca Platform Services
 
 [Service]
 EnvironmentFile={{ mdex_path }}/mdex_setup_sh.ini
