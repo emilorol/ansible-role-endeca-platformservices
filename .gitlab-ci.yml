@@ -11,9 +11,6 @@ before_script:
 
 variables:
   GET_SOURCES_ATTEMPTS: "5"
-  ANSIBLE_INVENTORY: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible/inventory/epc.py"
-  ANSIBLE_LIBRARY: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible"
-  ANSIBLE_INVENTORY_PLUGINS: "/home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible/inventory/epc.py"
 
 # Tests for Centos 6 EPC driver for Platformservices 11.3.0
 EPC Centos 6 endeca-platformservices 11.3.0:
