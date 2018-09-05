@@ -92,7 +92,6 @@
 
     - name: "Update pid location"
       lineinfile:
-      args:
         mode: "0755"
         path: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}/tools/server/bin/setenv.sh"
         regexp: "CATALINA_PID=.*"
