@@ -1,0 +1,35 @@
+---
+# platformservices version
+ps_version: "11.3.0"
+# path to install PS
+base_root: "/opt"
+
+# service name
+ps_service: "endeca-platformservices"
+
+# artifact source transport
+transport: "web"
+# available are:
+# - "web" Fetching artifact from custom web uri
+# - "local" Local artifact
+
+transport_local: "/tmp/V861203-01.zip"
+transport_web: "http://my-storage.example.com/V861203-01.zip"
+
+# path to download MDEX
+download_path: "/tmp"
+
+# variables for silent install
+install_set: "Typical"
+# available are:
+# - "Complete"
+# - "Typical"
+# - "PS-ACA" - PS & App Controller Agent
+# - "Ref-Impl" - Reference Implementation
+
+etools_http_port: "8888"
+etools_server_port: "8090"
+
+# PlatformServices versions lower 11.2
+etools_jcd_port: "8088"
+install_eac_controller: False

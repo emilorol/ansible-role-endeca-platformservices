@@ -1,0 +1,41 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+driver:
+  name: delegated
+lint:
+  name: yamllint
+  options:
+    config-file: .yamllint
+platforms:
+  - name: test-epc-centos6-endeca-platformservices
+    image: CentOS6_64-bit
+    shape: small
+    region: EPAM-BY2
+    wait_timeout: 1800
+    groups:
+      - rhel_family
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../resources/provisioning/create.yml
+    prepare: ../resources/provisioning/prepare.yml
+    destroy: ../resources/provisioning/destroy.yml
+  config_options:
+    ssh_connection:
+      control_path: "/var/ans/%%h"
+  lint:
+    name: ansible-lint
+  env:
+    ANSIBLE_LIBRARY:
+      /home/gitlab-runner/.local/lib/python2.7/site-packages/epam_ansible
+scenario:
+  name: cloud-epc-centos6
+verifier:
+  name: testinfra
+  options:
+    verbose: True
+  lint:
+    name: flake8

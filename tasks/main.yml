@@ -1,0 +1,24 @@
+---
+- name: "Check {{ version_txt }}"
+  stat:
+    path: "{{ version_txt }}"
+  register: version_file
+
+- name: "Read version_file file"
+  include_tasks: "read-ps-conf-props.yml"
+  when: version_file.stat.exists == True
+
+- name: "Install section"
+  block:
+    - name: "Fetch PlatformServices artifact with {{ transport }} transport"
+      include_tasks: "{{ transport_driver }}"
+      with_first_found:
+        - "fetch/{{ transport }}.yml"
+        - "fetch/unknown-transport.yml"
+      loop_control:
+        loop_var: transport_driver
+
+    - name: "Install PlatformServices {{ ps_version }}"
+      include_tasks: "install-ps.yml"
+
+  when: patch_installed is not defined

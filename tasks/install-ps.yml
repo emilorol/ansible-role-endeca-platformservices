@@ -1,0 +1,126 @@
+---
+- name: "Read MDEX path"
+  stat:
+    path: "{{ mdex_path }}"
+  register: mdex_dir
+
+- name: "Get endeca user"
+  set_fact:
+    endeca_user: "{{ mdex_dir.stat.pw_name }}"
+    endeca_group: "{{ mdex_dir.stat.gr_name }}"
+
+- name: "Become section"
+  block:
+    - name: "Install requirements"
+      package:
+        name: "unzip"
+        state: "present"
+
+    - name: "Extract PlatformServices installer"
+      unarchive:
+        src: "{{ ps_artifact }}"
+        dest: "{{ download_path }}"
+        list_files: True
+      register: ps_installer
+
+    - name: "Ensure {{ ps_installer.files[0] }} is executable"
+      file:
+      args:
+        path: "{{ download_path }}/{{ ps_installer.files[0] }}"
+        mode: "0755"
+
+  become: True
+
+- name: "Set ps_installer_bin"
+  set_fact:
+    ps_installer_bin: "{{ download_path }}/{{ ps_installer.files[0] }}"
+
+- name: "Create silent install file for PlatformServices{{ ps_version }}"
+  template:
+    src: "ps_installer.properties.j2"
+    dest: "{{ download_path }}/ps_installer_{{ ps_version }}.properties"
+
+- name: "Register silent install file"
+  set_fact:
+    ps_silent_prop: "{{ download_path }}/ps_installer_{{ ps_version }}.properties"
+
+- name: "Become section"
+  block:
+    # PlatformServices versions lower 11.2
+    - name: "Run installer"
+      command: "{{ ps_installer_bin }} --silent --target {{ base_root }} < {{ ps_silent_prop }}"
+      args:
+        creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
+      when: |
+        ( ps_version.split('.')[0] | int == 11 and
+          ps_version.split('.')[1] | int <= 1 ) or
+        ps_version.split('.')[0] | int <= 10
+
+    - name: "Run installer"
+      command: "{{ ps_installer_bin }} -i silent -f {{ ps_silent_prop }}"
+      args:
+        creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
+      when: |
+        ( ps_version.split('.')[0] | int == 11 and
+          ps_version.split('.')[1] | int >= 2 ) or
+        ps_version.split('.')[0] | int >= 11
+
+    - name: "Chown PlatformServices directory to {{ endeca_user }}"
+      file:
+        owner: "{{ endeca_user }}"
+        group: "{{ endeca_group }}"
+        path: "{{ base_root }}/endeca/PlatformServices"
+        state: "directory"
+        mode: "0775"
+        recurse: True
+
+    - name: "Put PlatformServices profile"
+      copy:
+        src: "{{ base_root }}/endeca/PlatformServices/workspace/setup/installer_sh.ini"
+        dest: "/etc/profile.d/ps.sh"
+        owner: "root"
+        group: "root"
+        mode: "0555"
+        remote_src: True
+
+    - name: "Create endeca pid directory"
+      file:
+        path: "{{ pid_dir }}"
+        owner: "{{ endeca_user }}"
+        group: "{{ endeca_group }}"
+        state: "directory"
+
+    - name: "Update pid location"
+      lineinfile:
+        mode: "0755"
+        path: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}/tools/server/bin/setenv.sh"
+        regexp: "CATALINA_PID=.*"
+        line: "CATALINA_PID={{ pid_dir }}/{{ ps_service }}.pid"
+        create: True
+
+    - name: "Create PlatformServices service in init.d"
+      template:
+        src: "platformservices_service.j2"
+        dest: "/etc/init.d/{{ ps_service }}"
+        mode: "0755"
+      when: ansible_facts.service_mgr in ("upstart", "sysvinit" )
+
+    - name: "Create PlatformServices service in systemd"
+      template:
+        src: "platformservices_service.j2"
+        dest: "/etc/systemd/system/{{ ps_service }}.service"
+        mode: "0755"
+      when: ansible_facts.service_mgr == "systemd"
+
+    - name: "Systemd daemon-reload"
+      systemd:
+        daemon_reload: True
+      when: ansible_facts.service_mgr == "systemd"
+
+    - name: "Start PlatformServices"
+      service:
+        name: "{{ ps_service }}"
+        enabled: True
+        state: "started"
+
+  become: True
