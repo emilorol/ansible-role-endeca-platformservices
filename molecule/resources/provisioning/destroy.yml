@@ -3,8 +3,9 @@
   hosts: localhost
   connection: local
   gather_facts: False
-  no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   tasks:
+    # Developer must implement.
     - name: Destroy molecule instance(s)
       epc_vm:
         description: "{{ item.name | default('Molecule_epc_instance') }}"
@@ -14,6 +15,7 @@
         project: "{{ item.project | default(omit) }}"
         instance_id: "{{ item.instance_id | default(omit) }}"
         ignore_ssl: "{{ item.ignore_ssl | default(True) }}"
+        wait_timeout: "{{ item.wait_timeout | default(1200) }}"
         state: terminate
       register: server
       with_items: "{{ molecule_yml.platforms }}"
@@ -26,6 +28,7 @@
       register: epc_jobs
       until: epc_jobs.finished
       retries: 300
+      delay: 20
       with_items: "{{ server.results }}"
 
     # Mandatory configuration for Molecule to function.
@@ -40,3 +43,4 @@
         content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
+    # Mandatory configuration for Molecule to function.

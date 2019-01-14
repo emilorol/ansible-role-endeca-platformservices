@@ -10,20 +10,23 @@ lint:
   options:
     config-file: .yamllint
 platforms:
-  - name: test-aws-centos6-endeca-platformservices
-    image: CentOS7_64-bit
-    shape: small
-    region: AWS-EUCENTRAL
+  - name: test-aws-centos7-endeca-platformservices
+    image: ami-9887c6e7
+    instance_type: m5.large
+    region: us-east-1
+    vpc_subnet_id: subnet-01be2149
+    spot_price: 0.04
     wait_timeout: 1800
+    ssh_user: centos
     groups:
       - rhel_family
 provisioner:
   name: ansible
   log: True
   playbooks:
-    create: ../resources/provisioning/create.yml
-    prepare: ../resources/provisioning/prepare.yml
-    destroy: ../resources/provisioning/destroy.yml
+    create: ../resources/provisioning/AWS/create.yml
+    prepare: ../resources/provisioning/AWS/prepare.yml
+    destroy: ../resources/provisioning/AWS/destroy.yml
   config_options:
     ssh_connection:
       control_path: "/var/ans/%%h"
@@ -32,11 +35,11 @@ provisioner:
   env:
     ANSIBLE_LIBRARY: ${ANSIBLE_LIBRARY}
 scenario:
-  name: cloud-aws-centos7
+  name: cloud-aws-direct-centos7
 verifier:
   name: testinfra
   options:
-    verbose: True
+    verbose: true
   directory: ../resources/tests/
   lint:
     name: flake8
