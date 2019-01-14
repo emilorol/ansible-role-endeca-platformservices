@@ -55,19 +55,13 @@
       command: "{{ ps_installer_bin }} --silent --target {{ base_root }} < {{ ps_silent_prop }}"
       args:
         creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
-      when: |
-        ( ps_version.split('.')[0] | int == 11 and
-          ps_version.split('.')[1] | int <= 1 ) or
-        ps_version.split('.')[0] | int <= 10
+      when: ps_version is version ('11.1.0', '<=')
 
     - name: "Run installer"
       command: "{{ ps_installer_bin }} -i silent -f {{ ps_silent_prop }}"
       args:
         creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
-      when: |
-        ( ps_version.split('.')[0] | int == 11 and
-          ps_version.split('.')[1] | int >= 2 ) or
-        ps_version.split('.')[0] | int >= 11
+      when: ps_version is version ('11.2.0', '>=')
 
     - name: "Chown PlatformServices directory to {{ endeca_user }}"
       file:
