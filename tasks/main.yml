@@ -6,7 +6,7 @@
 
 - name: "Read version_file file"
   include_tasks: "read-ps-conf-props.yml"
-  when: version_file.stat.exists == True
+  when: version_file.stat.exists | bool
 
 - name: "Install section"
   block:
