@@ -15,6 +15,10 @@
       package:
         name: "unzip"
         state: "present"
+      register: status
+      retries: 10
+      delay: 2
+      until: status is success
 
     - name: "Extract PlatformServices installer"
       unarchive:
