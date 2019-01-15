@@ -1,0 +1,6 @@
+---
+ps_service_script: endeca-platformservices
+ps_service_path: /etc/init.d
+ps_service_script_mode: 0755
+ps_service_handlers:
+  - Start PlatformServices
