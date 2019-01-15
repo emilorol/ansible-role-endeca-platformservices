@@ -18,7 +18,7 @@
       register: status
       retries: 10
       delay: 2
-      until: status is success
+      until: status is succeeded
 
     - name: "Extract PlatformServices installer"
       unarchive:
