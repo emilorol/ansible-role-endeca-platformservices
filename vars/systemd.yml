@@ -1,0 +1,7 @@
+---
+ps_service_script: endeca-platformservices.service
+ps_service_path: /etc/systemd/system
+ps_service_script_mode: 0644
+ps_service_handlers:
+  - Reload systemd configuration
+  - Start PlatformServices

@@ -15,6 +15,10 @@
       package:
         name: "unzip"
         state: "present"
+      register: status
+      retries: 10
+      delay: 2
+      until: status is succeeded
 
     - name: "Extract PlatformServices installer"
       unarchive:
@@ -35,14 +39,14 @@
   set_fact:
     ps_installer_bin: "{{ download_path }}/{{ ps_installer.files[0] }}"
 
-- name: "Create silent install file for PlatformServices{{ ps_version }}"
-  template:
-    src: "ps_installer.properties.j2"
-    dest: "{{ download_path }}/ps_installer_{{ ps_version }}.properties"
-
 - name: "Register silent install file"
   set_fact:
     ps_silent_prop: "{{ download_path }}/ps_installer_{{ ps_version }}.properties"
+
+- name: "Create silent install file for PlatformServices{{ ps_version }}"
+  template:
+    src: "ps_installer.properties.j2"
+    dest: "{{ ps_silent_prop }}"
 
 - name: "Become section"
   block:
@@ -51,19 +55,13 @@
       command: "{{ ps_installer_bin }} --silent --target {{ base_root }} < {{ ps_silent_prop }}"
       args:
         creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
-      when: |
-        ( ps_version.split('.')[0] | int == 11 and
-          ps_version.split('.')[1] | int <= 1 ) or
-        ps_version.split('.')[0] | int <= 10
+      when: ps_version is version ('11.1.0', '<=')
 
     - name: "Run installer"
       command: "{{ ps_installer_bin }} -i silent -f {{ ps_silent_prop }}"
       args:
         creates: "{{ base_root }}/endeca/PlatformServices/{{ ps_version }}"
-      when: |
-        ( ps_version.split('.')[0] | int == 11 and
-          ps_version.split('.')[1] | int >= 2 ) or
-        ps_version.split('.')[0] | int >= 11
+      when: ps_version is version ('11.2.0', '>=')
 
     - name: "Chown PlatformServices directory to {{ endeca_user }}"
       file:
@@ -98,29 +96,12 @@
         line: "CATALINA_PID={{ pid_dir }}/{{ ps_service }}.pid"
         create: True
 
-    - name: "Create PlatformServices service in init.d"
+    - name: "Create PlatformServices service"
       template:
-        src: "platformservices_service.j2"
-        dest: "/etc/init.d/{{ ps_service }}"
-        mode: "0755"
-      when: ansible_facts.service_mgr in ("upstart", "sysvinit" )
-
-    - name: "Create PlatformServices service in systemd"
-      template:
-        src: "platformservices_service.j2"
-        dest: "/etc/systemd/system/{{ ps_service }}.service"
-        mode: "0755"
-      when: ansible_facts.service_mgr == "systemd"
-
-    - name: "Systemd daemon-reload"
-      systemd:
-        daemon_reload: True
-      when: ansible_facts.service_mgr == "systemd"
-
-    - name: "Start PlatformServices"
-      service:
-        name: "{{ ps_service }}"
-        enabled: True
-        state: "started"
+        src: 'platformservices_service.j2'
+        dest: '{{ ps_service_path }}/{{ ps_service_script }}'
+        mode: '{{ ps_service_script_mode }}'
+        force: True
+      notify: '{{ ps_service_handlers }}'
 
   become: True

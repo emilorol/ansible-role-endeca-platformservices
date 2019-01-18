@@ -4,10 +4,10 @@
   roles:
     - role: lean_delivery.endeca_mdex
       transport: "web"
-      transport_web: "{{ lookup('env','STORAGE_EPC') }}/oracle-commerce-suite/commerce/endeca11.2/V78211-01.zip"
+      transport_web: "{{ lookup('env','STORAGE_AWS') }}/oracle-commerce-suite/commerce/endeca11.2/V78211-01.zip"
     - role: ansible-role-endeca-platformservices
       transport: "web"
       ps_version: "11.2.0"
-      transport_web: "{{ lookup('env','STORAGE_EPC') }}/oracle-commerce-suite/commerce/endeca11.2/V78226-01.zip"
+      transport_web: "{{ lookup('env','STORAGE_AWS') }}/oracle-commerce-suite/commerce/endeca11.2/V78226-01.zip"
   vars:
     mdex_version: "6.5.2"

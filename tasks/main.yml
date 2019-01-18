@@ -6,7 +6,15 @@
 
 - name: "Read version_file file"
   include_tasks: "read-ps-conf-props.yml"
-  when: version_file.stat.exists == True
+  when: version_file.stat.exists | bool
+
+- name: Load a variable file based on the service manager
+  include_vars: '{{ service_manager }}'
+  with_first_found:
+    - '{{ ansible_service_mgr }}.yml'
+    - systemv.yml
+  loop_control:
+    loop_var: service_manager
 
 - name: "Install section"
   block:

@@ -1,2 +1,12 @@
 ---
-# handlers file for endeca_platformservices
+- name: "Reload systemd configuration"
+  systemd:
+    daemon_reload: True
+  become: True
+
+- name: "Start PlatformServices"
+  service:
+    name: "{{ ps_service }}"
+    enabled: True
+    state: "started"
+  become: True

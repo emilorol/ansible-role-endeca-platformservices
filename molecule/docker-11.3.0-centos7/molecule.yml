@@ -14,14 +14,18 @@ platforms:
     image: leandelivery/docker-systemd:centos7
     privileged: True
     groups:
-      - ansible_role_docker_ct
+      - rhel_family
 provisioner:
   name: ansible
+  log: True
   lint:
     name: ansible-lint
 scenario:
   name: docker-11.3.0-centos7
 verifier:
   name: testinfra
+  options:
+    verbose: True
+  directory: ../resources/tests/
   lint:
     name: flake8
